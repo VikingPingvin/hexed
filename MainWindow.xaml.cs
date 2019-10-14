@@ -1,6 +1,7 @@
 ﻿using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,7 +32,36 @@ namespace HeXED
             OpenFileDialog openDialog = new OpenFileDialog();
             if (openDialog.ShowDialog() == true)
             {
-                int a = 1;
+                StringBuilder sb = new StringBuilder();
+                StringBuilder sbHex = new StringBuilder();
+                System.Text.ASCIIEncoding asciiEncoding = new System.Text.ASCIIEncoding();
+
+                string fileName = openDialog.FileName;
+                string[] fileLines = File.ReadAllLines(fileName);
+
+                int loadingStatus = 0;
+
+                Parallel.ForEach(File.ReadLines(fileName), line =>
+                {
+                    sb.Append(line);
+                });
+
+                string hexString;
+
+                foreach (var c in sb.ToString())
+                {
+                    ushort hexVal = Convert.ToUInt16(c);
+                    sbHex.Append(hexVal);
+                    sbHex.Append("\t");
+                    Console.WriteLine(string.Format("Char: {0}   HEX: {1}", c, hexVal));
+                }
+                hexString = sbHex.ToString();
+                rtbEditor.AppendText(hexString);
+                
+
+                rtbEditor.AppendText("\n\n WRITING FINISHED!!!");
+                Console.WriteLine("Writing finished!");
+
             }
         }
     }
